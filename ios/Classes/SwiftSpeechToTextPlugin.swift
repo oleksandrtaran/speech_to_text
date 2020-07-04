@@ -78,6 +78,8 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
     private var returnPartialResults: Bool = true
     private var failedListen: Bool = false
     private var listening = false
+    private var hwSRate: Double = 48000.0       // guess of device hardware sample rate
+    private var sampleRate: Double = 44100.0    // default audio sample rate
     private let audioSession = AVAudioSession.sharedInstance()
     private let audioEngine = AVAudioEngine()
     private let jsonEncoder = JSONEncoder()
@@ -356,9 +358,21 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             }
             rememberedAudioCategory = self.audioSession.category
             try self.audioSession.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
-            //            try self.audioSession.setMode(AVAudioSession.Mode.measurement)
+
+            // choose 44100 or 48000 based on hardware rate
+            // sampleRate = 44100.0
+            var preferredIOBufferDuration = 0.0058      // 5.8 milliseconds = 256 samples
+            hwSRate = audioSession.sampleRate           // get native hardware rate
+            if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
+            if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
+            let desiredSampleRate = sampleRate
+            try self.audioSession.setPreferredSampleRate(desiredSampleRate)
+            // try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
+
+            // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
             try self.audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+
             if let sound = listeningSound {
                 self.onPlayEnd = {()->Void in
                     if ( !self.failedListen ) {
@@ -399,8 +413,6 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             }
             self.currentTask = self.recognizer?.recognitionTask(with: currentRequest, delegate: self )
             let recordingFormat = inputNode.outputFormat(forBus: self.busForNodeTap)
-
-            try self.audioSession.setPreferredSampleRate(recordingFormat.sampleRate)
 
             try trap {
                 inputNode.installTap(onBus: self.busForNodeTap, bufferSize: self.speechBufferSize, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
