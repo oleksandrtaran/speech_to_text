@@ -79,7 +79,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
     private var failedListen: Bool = false
     private var listening = false
     private var hwSRate: Double = 48000.0       // guess of device hardware sample rate
-    private var sampleRate: Double = 48000.0    // default audio sample rate
+    private var sampleRate: Double = 44100.0    // default audio sample rate
     private let audioSession = AVAudioSession.sharedInstance()
     private let audioEngine = AVAudioEngine()
     private let jsonEncoder = JSONEncoder()
@@ -366,8 +366,8 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
             if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
             let desiredSampleRate = sampleRate
-            try self.audioSession.setPreferredSampleRate(sampleRate)
-            // try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
+            try self.audioSession.setPreferredSampleRate(desiredSampleRate)
+            try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
 
             // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
