@@ -79,7 +79,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
     private var failedListen: Bool = false
     private var listening = false
     private var hwSRate: Double = 48000.0       // guess of device hardware sample rate
-    private var sampleRate: Double = 44100.0    // default audio sample rate
+    private var sampleRate: Double = 48000.0    // default audio sample rate
     private let audioSession = AVAudioSession.sharedInstance()
     private let audioEngine = AVAudioEngine()
     private let jsonEncoder = JSONEncoder()
