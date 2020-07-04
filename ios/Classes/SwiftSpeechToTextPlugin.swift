@@ -358,7 +358,6 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             try self.audioSession.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
             //            try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
-            try self.audioSession.setPreferredSampleRate(16000)
             try self.audioSession.setActive(true, options: .notifyOthersOnDeactivation)
             if let sound = listeningSound {
                 self.onPlayEnd = {()->Void in
@@ -375,6 +374,9 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             if(inputNode.inputFormat(forBus: 0).channelCount == 0){
                 throw SpeechToTextError.runtimeError("Not enough available inputs.")
             }
+
+            try self.audioSession.setPreferredSampleRate(inputNode.inputFormat(forBus: 0).sampleRate)
+
             self.currentRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let currentRequest = self.currentRequest else {
                 sendBoolResult( false, result );
