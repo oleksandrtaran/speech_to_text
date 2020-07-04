@@ -375,8 +375,6 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
                 throw SpeechToTextError.runtimeError("Not enough available inputs.")
             }
 
-            try self.audioSession.setPreferredSampleRate(inputNode.inputFormat(forBus: 0).sampleRate)
-
             self.currentRequest = SFSpeechAudioBufferRecognitionRequest()
             guard let currentRequest = self.currentRequest else {
                 sendBoolResult( false, result );
@@ -401,6 +399,9 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             }
             self.currentTask = self.recognizer?.recognitionTask(with: currentRequest, delegate: self )
             let recordingFormat = inputNode.outputFormat(forBus: self.busForNodeTap)
+
+            try self.audioSession.setPreferredSampleRate(recordingFormat.sampleRate)
+
             try trap {
                 inputNode.installTap(onBus: self.busForNodeTap, bufferSize: self.speechBufferSize, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
                     currentRequest.append(buffer)
