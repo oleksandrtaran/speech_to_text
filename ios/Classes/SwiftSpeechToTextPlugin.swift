@@ -366,10 +366,11 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
 //             if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
 //             if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
 //             let desiredSampleRate = sampleRate
-            let desiredSampleRate = 16000.0
-//             os_log("sampleRate hwSRate = %{private}@", log: pluginLog, type: .info, hwSRate)
-//             os_log("sampleRate format = %{private}@", log: pluginLog, type: .info, sampleRate)
-            try self.audioSession.setPreferredSampleRate(desiredSampleRate)
+//             let desiredSampleRate = 16000.0
+            os_log("before sampleRate hwSRate", log: pluginLog, type: .error)
+            os_log("sampleRate hwSRate = %{PRIVATE}@", log: pluginLog, type: .error, hwSRate)
+//             os_log("sampleRate format = %{PRIVATE}@", log: pluginLog, type: .info, sampleRate)
+            try self.audioSession.setPreferredSampleRate(sampleRate)
 //             try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
 
             // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
@@ -436,7 +437,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
         }
         catch {
             failedListen = true
-            os_log("Error starting listen: %{private}@", log: pluginLog, type: .error, error.localizedDescription)
+            os_log("Error starting listen: %{PRIVATE}@", log: pluginLog, type: .error, error.localizedDescription)
             stopCurrentListen()
             sendBoolResult( false, result );
             invokeFlutter( SwiftSpeechToTextCallbackMethods.notifyStatus, arguments: SpeechToTextStatus.notListening.rawValue )
@@ -582,7 +583,7 @@ extension SwiftSpeechToTextPlugin : SFSpeechRecognitionTaskDelegate {
     
     private func reportError( source: String, error: Error?) {
         if ( nil != error) {
-            os_log("%{PUBLIC}@ reportError with error: %{private}@", log: pluginLog, type: .debug, source, error.debugDescription)
+            os_log("%{PUBLIC}@ reportError with error: %{PRIVATE}@", log: pluginLog, type: .debug, source, error.debugDescription)
         }
     }
 }
