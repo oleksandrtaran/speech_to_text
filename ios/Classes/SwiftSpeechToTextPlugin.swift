@@ -363,15 +363,17 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             // sampleRate = 44100.0
             var preferredIOBufferDuration = 0.0058      // 5.8 milliseconds = 256 samples
             hwSRate = audioSession.sampleRate           // get native hardware rate
-            if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
-            if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
-            let desiredSampleRate = sampleRate
-            try self.audioSession.setPreferredSampleRate(desiredSampleRate)
-            try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
+//             if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
+//             if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
+//             let desiredSampleRate = sampleRate
+            os_log("sampleRate hwSRate = %{private}@", log: pluginLog, type: .info, hwSRate)
+            os_log("sampleRate format = %{private}@", log: pluginLog, type: .info, sampleRate)
+//             try self.audioSession.setPreferredSampleRate(desiredSampleRate)
+//             try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
 
             // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
-            try self.audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            try self.audioSession.setActive(true)
 
             if let sound = listeningSound {
                 self.onPlayEnd = {()->Void in
