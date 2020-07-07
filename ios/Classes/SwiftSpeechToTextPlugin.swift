@@ -368,7 +368,8 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
 //             let desiredSampleRate = sampleRate
 //             let desiredSampleRate = 16000.0
             os_log("before sampleRate hwSRate", log: pluginLog, type: .error)
-            os_log("sampleRate hwSRate = %{PUBLIC}@", log: pluginLog, type: .error, hwSRate)
+            let mystring = "sampleRate hwSRate = (hwSRate)"
+            os_log("%@", log: pluginLog, type: .error, mystring)
 //             os_log("sampleRate format = %{PRIVATE}@", log: pluginLog, type: .info, sampleRate)
             try self.audioSession.setPreferredSampleRate(sampleRate)
 //             try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
