@@ -357,9 +357,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             }
             rememberedAudioCategory = self.audioSession.category
             try self.audioSession.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
-
             try self.audioSession.setPreferredSampleRate(sampleRate)
-
             // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
             try self.audioSession.setActive(true)
