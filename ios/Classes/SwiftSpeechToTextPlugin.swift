@@ -435,7 +435,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
         }
         catch {
             failedListen = true
-            os_log("Error starting listen: %{PUBLIC}@", log: pluginLog, type: .error, error.localizedDescription)
+            os_log("Error starting listen: %{private}@", log: pluginLog, type: .error, error.localizedDescription)
             stopCurrentListen()
             sendBoolResult( false, result );
             invokeFlutter( SwiftSpeechToTextCallbackMethods.notifyStatus, arguments: SpeechToTextStatus.notListening.rawValue )
@@ -581,7 +581,7 @@ extension SwiftSpeechToTextPlugin : SFSpeechRecognitionTaskDelegate {
     
     private func reportError( source: String, error: Error?) {
         if ( nil != error) {
-            os_log("%{PUBLIC}@ with error: %{PUBLIC}@", log: pluginLog, type: .debug, source, error.debugDescription)
+            os_log("%{PUBLIC}@ reportError with error: %{private}@", log: pluginLog, type: .debug, source, error.debugDescription)
         }
     }
 }
