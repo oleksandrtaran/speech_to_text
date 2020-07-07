@@ -78,7 +78,6 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
     private var returnPartialResults: Bool = true
     private var failedListen: Bool = false
     private var listening = false
-    private var hwSRate: Double = 48000.0       // guess of device hardware sample rate
     private var sampleRate: Double = 44100.0    // default audio sample rate
     private let audioSession = AVAudioSession.sharedInstance()
     private let audioEngine = AVAudioEngine()
@@ -359,20 +358,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
             rememberedAudioCategory = self.audioSession.category
             try self.audioSession.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
 
-            // choose 44100 or 48000 based on hardware rate
-            // sampleRate = 44100.0
-            var preferredIOBufferDuration = 0.0058      // 5.8 milliseconds = 256 samples
-            hwSRate = audioSession.sampleRate           // get native hardware rate
-//             if hwSRate == 48000.0 { sampleRate = 48000.0 }  // set session to hardware rate
-//             if hwSRate == 48000.0 { preferredIOBufferDuration = 0.0053 }
-//             let desiredSampleRate = sampleRate
-//             let desiredSampleRate = 16000.0
-            os_log("before sampleRate hwSRate", log: pluginLog, type: .error)
-            let mystring = "sampleRate hwSRate = (hwSRate)"
-            os_log("%@", log: pluginLog, type: .error, mystring)
-//             os_log("sampleRate format = %{PRIVATE}@", log: pluginLog, type: .info, sampleRate)
             try self.audioSession.setPreferredSampleRate(sampleRate)
-//             try self.audioSession.setPreferredIOBufferDuration(preferredIOBufferDuration)
 
             // try self.audioSession.setMode(AVAudioSession.Mode.measurement)
             try self.audioSession.setMode(AVAudioSession.Mode.default)
@@ -438,7 +424,7 @@ public class SwiftSpeechToTextPlugin: NSObject, FlutterPlugin {
         }
         catch {
             failedListen = true
-            os_log("Error starting listen: %{PRIVATE}@", log: pluginLog, type: .error, error.localizedDescription)
+            os_log("Error starting listen: %{PUBLIC}@", log: pluginLog, type: .error, error.localizedDescription)
             stopCurrentListen()
             sendBoolResult( false, result );
             invokeFlutter( SwiftSpeechToTextCallbackMethods.notifyStatus, arguments: SpeechToTextStatus.notListening.rawValue )
@@ -584,7 +570,7 @@ extension SwiftSpeechToTextPlugin : SFSpeechRecognitionTaskDelegate {
     
     private func reportError( source: String, error: Error?) {
         if ( nil != error) {
-            os_log("%{PUBLIC}@ reportError with error: %{PRIVATE}@", log: pluginLog, type: .debug, source, error.debugDescription)
+            os_log("%{PUBLIC}@ reportError with error: %{PUBLIC}@", log: pluginLog, type: .debug, source, error.debugDescription)
         }
     }
 }
